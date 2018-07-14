@@ -1,0 +1,15 @@
+[kimai]
+;Here write your creditentials to the kimai server
+username=kimaiusername
+password=kimaipassword
+serverUrl=0.0.0.0
+serverPort=80
+
+[rainmeter]
+;this section is for rainmeter compatibility. Ignore them if you don't use the Rainmeter skin. If you use my default skins, don't edit this section
+;in the path variable please use double blackslashes
+rainmeterExePath="C:\\Program Files\\Rainmeter\\Rainmeter.exe"
+rainmeterStyleProjectsTitle=styleKimaiProjectsTitle
+rainmeterStyleProjects=styleKimaiProjects
+rainmeterStyleTasksTitle=styleKimaiTasksTitle
+rainmeterStyleTasks=styleKimaiTasks

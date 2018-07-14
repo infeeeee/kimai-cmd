@@ -1,0 +1,1 @@
+schtasks /Create /XML kimaiStop.xml /TN kimaiStop
