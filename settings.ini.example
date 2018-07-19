@@ -1,9 +1,12 @@
 [kimai]
-;Here write your creditentials to the kimai server
+;Here write your creditentials and settings for the the kimai server. For protocol use http or https
 username=kimaiusername
 password=kimaipassword
+
+protocol=http
 serverUrl=0.0.0.0
 serverPort=80
+
 
 [rainmeter]
 ;this section is for rainmeter compatibility. Ignore them if you don't use the Rainmeter skin. If you use my default skins, don't edit this section

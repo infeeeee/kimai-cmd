@@ -2,7 +2,9 @@
 
 A command line client for [Kimai](http://www.kimai.org/), the open source self hosted timetracker.
 This program was created to be used with the rainmeter skin [kimai-widget](https://github.com/infeeeee/kimai-widget) on Windows.
+
 To use this program you have to install Kimai first!
+
 More info on Kimai:
 * [kimai.org](http://www.kimai.org/)
 * [github](https://github.com/kimai/kimai)
@@ -12,12 +14,9 @@ More info on Kimai:
 * List all projects, activities
 * List currently active project and activity
 * Start/stop a project and activity
+* Access server via SSL
 * Generate settings for Rainmeter (Rainmeter is Windows only)
 * Automatically stop timer when nobody uses the computer or when user logs off (Windows only) 
-
-### Not working features
-
-* SSL is not supported yet, if you need it create an issue, I would like to test it on your server, mine is not with ssl
 
 ## Installing
 
@@ -47,6 +46,8 @@ More info on Kimai:
 ```
 cd kimai-cmd
 npm install
+cp settings.ini.example settings.ini
+nano settings.ini
 node kimai-cmd list
 ```
 * On windows you can build all versions with the `build all.bat`, if [pkg](https://www.npmjs.com/package/pkg) installed

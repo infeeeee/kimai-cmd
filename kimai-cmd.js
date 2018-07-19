@@ -21,8 +21,8 @@ var rainmeterOption;
 var client;
 
 //node modules
-//json rpc
-var rpc = require('node-json-rpc');
+//json rpc 2
+const RpcClient = require('node-json-rpc2').Client;
 
 //File system, path, child process
 const fs = require('fs');
@@ -55,12 +55,15 @@ function kimaiCall(method, param, callback) {
             if (err) {
                 console.log("Error: " + err);
                 return false;
-            }
-            else {
-                if (res.result.success) {
+            } else {
+                if (res && res.result.success) {
                     console.log("->Success")
                 } else {
                     console.log("->Negative")
+                    if (typeof callback === "function") {
+                        callback(res);
+                    }
+                    return
                 }
                 if (res.result.items && verbose) {
                     for (var i = 0; i < res.result.items.length; i++) {
@@ -85,19 +88,19 @@ function kimaiCall(method, param, callback) {
 
 //reading settings file, starting rpc, calling authentication
 function kimaiAuthenticate(callback) {
-    
+
     //different settings.ini path for developement and pkg version
     var settingsPath;
-    var settingsPathPkg=path.join(path.dirname(process.execPath),'/settings.ini')
-    var settingsPathNode=path.join(__dirname, '/settings.ini')
-    
-    if (fs.existsSync(settingsPathPkg)) {        
-        var settingsPath=settingsPathPkg
-    }else if(fs.existsSync(settingsPathNode)){
-        var settingsPath=settingsPathNode
-    }else{
+    var settingsPathPkg = path.join(path.dirname(process.execPath), '/settings.ini')
+    var settingsPathNode = path.join(__dirname, '/settings.ini')
+
+    if (fs.existsSync(settingsPathPkg)) {
+        var settingsPath = settingsPathPkg
+    } else if (fs.existsSync(settingsPathNode)) {
+        var settingsPath = settingsPathNode
+    } else {
         console.log("Error: settings.ini not found!")
-        if(verbose){
+        if (verbose) {
             console.log("Searched locations:")
             console.log(settingsPathPkg)
             console.log(settingsPathNode)
@@ -108,17 +111,20 @@ function kimaiAuthenticate(callback) {
     settings = ini.parse(fs.readFileSync(settingsPath, 'utf-8'))
 
     var options = {
-        port: settings.kimai.serverPort,
+        protocol: settings.kimai.protocol,
+        port: settings.kimai.serverPort ,
         host: settings.kimai.serverUrl,
-        path: '/core/json.php',
-        strict: true
+        path: '/core/json.php'
     };
 
-    client = new rpc.Client(options);
+    client = new RpcClient(options);
 
     kimaiCall("authenticate", [settings.kimai.username, settings.kimai.password], function (res) {
-        if (res.result.success) {
+        if (res && res.result.success) {
             apiKey = res.result.items[0].apiKey;
+            if (verbose) {
+                console.log("apiKey: " + apiKey)
+            }
             if (typeof callback === "function") {
                 callback();
             }
@@ -211,11 +217,11 @@ function writeRainmeter() {
     var rainVars = "[Variables]\r\nserverUrl=http://" + settings.kimai.serverUrl + ":" + settings.kimai.serverPort + "/core/kimai.php\r\nactiveProject=" + rainProject + "\r\nactiveTask=" + rainTask + "\r\n\r\n"
     var rainData = "";
 
-    rainData += "[MeterProjectTitle]\r\nMeter=String\r\nMeterStyle="+ settings.rainmeter.rainmeterStyleProjectsTitle +"\r\nDynamicVariables=1\r\nHidden=#MenuVis#\r\nText=Projects\r\n"
+    rainData += "[MeterProjectTitle]\r\nMeter=String\r\nMeterStyle=" + settings.rainmeter.rainmeterStyleProjectsTitle + "\r\nDynamicVariables=1\r\nHidden=#MenuVis#\r\nText=Projects\r\n"
 
     for (var index = 0; index < projects.length; index++) {
         var element = projects[index].qWrap();
-        rainData += "[MeterProject" + index + "]\r\nMeter=String\r\nMeterStyle="+ settings.rainmeter.rainmeterStyleProjects +"\r\nDynamicVariables=1\r\nHidden=#MenuVis#\r\nText=" + element
+        rainData += "[MeterProject" + index + "]\r\nMeter=String\r\nMeterStyle=" + settings.rainmeter.rainmeterStyleProjects + "\r\nDynamicVariables=1\r\nHidden=#MenuVis#\r\nText=" + element
             + "\r\nleftmouseupaction=[!SetOption MeterProject" + index + " Prefix > ][!SetOption #activeProjectMeter# Prefix  \"\"][!SetVariable activeProjectMeter MeterProject" + index + "][!SetVariable activeProject " + element + "]\r\n"
         if (element == rainProject) {
             rainData += "Prefix=>"
@@ -225,11 +231,11 @@ function writeRainmeter() {
         // rainData = rainData + "project" + index + "=" + element + "\r\n"
     }
 
-    rainData += "[MeterTaskTitle]\r\nMeter=String\r\nMeterStyle="+ settings.rainmeter.rainmeterStyleTasksTitle +"\r\nDynamicVariables=1\r\nHidden=#MenuVis#\r\nText=Tasks\r\n"
+    rainData += "[MeterTaskTitle]\r\nMeter=String\r\nMeterStyle=" + settings.rainmeter.rainmeterStyleTasksTitle + "\r\nDynamicVariables=1\r\nHidden=#MenuVis#\r\nText=Tasks\r\n"
 
     for (var index = 0; index < tasks.length; index++) {
         var element = tasks[index].qWrap();
-        rainData += "[MeterTask" + index + "]\r\nMeter=String\r\nMeterStyle="+ settings.rainmeter.rainmeterStyleTasks +"\r\nDynamicVariables=1\r\nHidden=#MenuVis#\r\nText=" + element
+        rainData += "[MeterTask" + index + "]\r\nMeter=String\r\nMeterStyle=" + settings.rainmeter.rainmeterStyleTasks + "\r\nDynamicVariables=1\r\nHidden=#MenuVis#\r\nText=" + element
             + "\r\nleftmouseupaction=[!SetOption MeterTask" + index + " Prefix > ][!SetOption #activeTaskMeter# Prefix  \"\"][!SetVariable activeTaskMeter MeterTask" + index + "][!SetVariable activeTask " + element + "]\r\n"
         if (element == rainTask) {
             rainData += "Prefix=>"
@@ -288,7 +294,7 @@ function kimaiList(rainmeter) {
                 niceLog(tasks)
                 if (isActive && active) {
                     console.log("\nActive: " + active.projectName + " - " + active.activityName)
-                }else{
+                } else {
                     console.log("\nNo active recording.")
                 }
                 if (rainmeter) {
