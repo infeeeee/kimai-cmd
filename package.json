@@ -1,6 +1,6 @@
 {
   "name": "kimai-cmd",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "Command line client for Kimai, the open source self hosted timetracker.",
   "main": "kimai-cmd.js",
   "scripts": {
@@ -25,5 +25,8 @@
   "bugs": {
     "url": "https://github.com/infeeeee/kimai-cmd/issues"
   },
-  "homepage": "https://github.com/infeeeee/kimai-cmd#readme"
+  "homepage": "https://github.com/infeeeee/kimai-cmd#readme",
+  "pkg": {
+    "assets": ""
+  }
 }

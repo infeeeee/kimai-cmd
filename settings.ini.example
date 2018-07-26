@@ -1,11 +1,12 @@
 [kimai]
-;Here write your creditentials and settings for the the kimai server. For protocol use http or https
+;Here write your creditentials and settings for the the kimai server. For protocol use http or https. Use subfolder if you installed kimai in a subfolder, leave empty if you don't need it.
 username=kimaiusername
 password=kimaipassword
 
 protocol=http
 serverUrl=0.0.0.0
 serverPort=80
+subfolder=
 
 
 [rainmeter]

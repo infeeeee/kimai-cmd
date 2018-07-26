@@ -89,6 +89,10 @@ function kimaiCall(method, param, callback) {
 //reading settings file, starting rpc, calling authentication
 function kimaiAuthenticate(callback) {
 
+    if (program.verbose) {
+        verbose = true;
+    }
+
     //different settings.ini path for developement and pkg version
     var settingsPath;
     var settingsPathPkg = path.join(path.dirname(process.execPath), '/settings.ini')
@@ -110,11 +114,37 @@ function kimaiAuthenticate(callback) {
 
     settings = ini.parse(fs.readFileSync(settingsPath, 'utf-8'))
 
+    var jsonPath
+
+    if (verbose) {
+        console.log("Reading settings.ini from "+ settingsPath)
+    }
+
+    if (settings.kimai.subfolder) {
+        var subf = settings.kimai.subfolder
+        var subfolderArr = settings.kimai.subfolder.split("")
+        if (subfolderArr[0]=="/") {
+            var subf = subf.substr(1)
+        }
+        if (subfolderArr[subfolderArr.length-1]=="/") {
+            var subf = subf.slice(0, -1)
+        }
+        jsonPath = '/' + subf + '/core/json.php'
+        
+    }else{
+        jsonPath = '/core/json.php'
+    }
+
+    if (verbose) {
+        console.log("full url to json.php: " + settings.kimai.protocol + "://"+ settings.kimai.serverUrl + ":" + settings.kimai.serverPort + jsonPath)
+    }
+
+
     var options = {
         protocol: settings.kimai.protocol,
-        port: settings.kimai.serverPort ,
+        port: settings.kimai.serverPort,
         host: settings.kimai.serverUrl,
-        path: '/core/json.php'
+        path: jsonPath
     };
 
     client = new RpcClient(options);
@@ -409,12 +439,9 @@ program.command('list')
 
 program.parse(process.argv);
 
-
 if (!program.args.length) program.help();
 
-if (program.verbose) {
-    verbose = true;
-}
+//verbose var moved to kimaiAuthenticate()
 
 if (program.end) {
     endHang = true;
