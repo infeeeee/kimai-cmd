@@ -10,6 +10,7 @@ var tasks = [];
 var taskIDs = [];
 var active = {};
 var isActive = false;
+var fullUrl;
 
 //for settings
 var settings = {};
@@ -48,7 +49,7 @@ String.prototype.qWrap = function () {
 
 //calling the server
 function kimaiCall(method, param, callback) {
-    console.log("Calling " + settings.kimai.serverUrl + ":" + settings.kimai.serverPort + " Method: " + method);
+    console.log("Calling " + fullUrl + " Method: " + method);
     client.call(
         { "jsonrpc": "2.0", "method": method, "params": param, "id": 0 },
         function (err, res) {
@@ -117,26 +118,28 @@ function kimaiAuthenticate(callback) {
     var jsonPath
 
     if (verbose) {
-        console.log("Reading settings.ini from "+ settingsPath)
+        console.log("Reading settings.ini from " + settingsPath)
     }
 
     if (settings.kimai.subfolder) {
         var subf = settings.kimai.subfolder
         var subfolderArr = settings.kimai.subfolder.split("")
-        if (subfolderArr[0]=="/") {
+        if (subfolderArr[0] == "/") {
             var subf = subf.substr(1)
         }
-        if (subfolderArr[subfolderArr.length-1]=="/") {
+        if (subfolderArr[subfolderArr.length - 1] == "/") {
             var subf = subf.slice(0, -1)
         }
         jsonPath = '/' + subf + '/core/json.php'
-        
-    }else{
+
+    } else {
         jsonPath = '/core/json.php'
     }
 
+    fullUrl = settings.kimai.protocol + "://" + settings.kimai.serverUrl + ":" + settings.kimai.serverPort + jsonPath
+
     if (verbose) {
-        console.log("full url to json.php: " + settings.kimai.protocol + "://"+ settings.kimai.serverUrl + ":" + settings.kimai.serverPort + jsonPath)
+        console.log("full url: " + fullUrl)
     }
 
 
@@ -244,10 +247,10 @@ function writeRainmeter() {
         rainTask = active.activityName.qWrap()
     }
 
-    var rainVars = "[Variables]\r\nserverUrl=http://" + settings.kimai.serverUrl + ":" + settings.kimai.serverPort + "/core/kimai.php\r\nactiveProject=" + rainProject + "\r\nactiveTask=" + rainTask + "\r\n\r\n"
+    var rainVars = "[Variables]\r\nserverUrl=" + fullUrl + "\r\nactiveProject=" + rainProject + "\r\nactiveTask=" + rainTask + "\r\n\r\n"
     var rainData = "";
 
-    rainData += "[MeterProjectTitle]\r\nMeter=String\r\nMeterStyle=" + settings.rainmeter.rainmeterStyleProjectsTitle + "\r\nDynamicVariables=1\r\nHidden=#MenuVis#\r\nText=Projects\r\n"
+    rainData += "[MeterProjectTitle]\r\nMeter=String\r\nMeterStyle=" + settings.rainmeter.rainmeterStyleProjectsTitle + "\r\nDynamicVariables=1\r\nHidden=#MenuVis#\r\nText=Projects\r\n\r\n"
 
     for (var index = 0; index < projects.length; index++) {
         var element = projects[index].qWrap();
