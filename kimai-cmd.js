@@ -11,6 +11,7 @@ var taskIDs = [];
 var active = {};
 var isActive = false;
 var fullUrl;
+var homepageUrl;
 
 //for settings
 var settings = {};
@@ -115,7 +116,8 @@ function kimaiAuthenticate(callback) {
 
     settings = ini.parse(fs.readFileSync(settingsPath, 'utf-8'))
 
-    var jsonPath
+    var jsonPath;
+    var homePath;
 
     if (verbose) {
         console.log("Reading settings.ini from " + settingsPath)
@@ -131,12 +133,15 @@ function kimaiAuthenticate(callback) {
             var subf = subf.slice(0, -1)
         }
         jsonPath = '/' + subf + '/core/json.php'
+        homePath = '/' + subf
 
     } else {
         jsonPath = '/core/json.php'
+        homePath = ''
     }
 
     fullUrl = settings.kimai.protocol + "://" + settings.kimai.serverUrl + ":" + settings.kimai.serverPort + jsonPath
+    homepageUrl = settings.kimai.protocol + "://" + settings.kimai.serverUrl + ":" + settings.kimai.serverPort + homePath
 
     if (verbose) {
         console.log("full url: " + fullUrl)
@@ -247,7 +252,7 @@ function writeRainmeter() {
         rainTask = active.activityName.qWrap()
     }
 
-    var rainVars = "[Variables]\r\nserverUrl=" + fullUrl + "\r\nactiveProject=" + rainProject + "\r\nactiveTask=" + rainTask + "\r\n\r\n"
+    var rainVars = "[Variables]\r\nserverUrl=" + homepageUrl + "\r\nactiveProject=" + rainProject + "\r\nactiveTask=" + rainTask + "\r\n\r\n"
     var rainData = "";
 
     rainData += "[MeterProjectTitle]\r\nMeter=String\r\nMeterStyle=" + settings.rainmeter.rainmeterStyleProjectsTitle + "\r\nDynamicVariables=1\r\nHidden=#MenuVis#\r\nText=Projects\r\n\r\n"
