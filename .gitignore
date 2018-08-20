@@ -63,3 +63,5 @@ typings/
 nemkell/
 builds/
 settings.ini
+kimaiData.inc
+kimaiVars.inc

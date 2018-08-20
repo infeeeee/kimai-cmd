@@ -95,6 +95,11 @@ function kimaiAuthenticate(callback) {
         verbose = true;
     }
 
+    if (verbose) {
+        var currDate = new Date()
+        console.log(currDate.toString())
+    }
+
     //different settings.ini path for developement and pkg version
     var settingsPath;
     var settingsPathPkg = path.join(path.dirname(process.execPath), '/settings.ini')
@@ -241,7 +246,24 @@ function writeRainmeter() {
     //     if (err) throw err;
     //     console.log('The file has been saved!');
     // });
-    console.log("\nwriting rainmeter files")
+    console.log("\nChecking rainmeter files")
+    if (fs.existsSync('kimaiData.inc') && fs.existsSync('kimaiVars.inc')) {
+        console.log("->Positive")
+        console.log("Deleting previous rainmeter files")
+        fs.unlinkSync('kimaiData.inc', (err) => {
+            if (err) throw err;
+        });
+        fs.unlinkSync('kimaiVars.inc', (err) => {
+            if (err) throw err;
+        });
+        if (!fs.existsSync('kimaiData.inc') && !fs.existsSync('kimaiVars.inc')) {
+            console.log("Files deleted successfully")
+        }
+    } else {
+        console.log("->Negative")
+    }
+
+    console.log("\nWriting rainmeter files")
     var rainProject;
     var rainTask
     if (isActive == false) {
