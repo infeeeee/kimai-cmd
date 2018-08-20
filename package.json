@@ -1,6 +1,6 @@
 {
   "name": "kimai-cmd",
-  "version": "0.2.3",
+  "version": "0.2.4",
   "description": "Command line client for Kimai, the open source self hosted timetracker.",
   "main": "kimai-cmd.js",
   "scripts": {
