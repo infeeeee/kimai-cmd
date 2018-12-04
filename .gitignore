@@ -65,3 +65,4 @@ builds/
 settings.ini
 kimaiData.inc
 kimaiVars.inc
+.vscode/
