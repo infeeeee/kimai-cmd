@@ -1,5 +1,7 @@
 # kimai-cmd
 
+__This client is for Kimai1! For Kimai2 see [kimai2-cmd](https://github.com/infeeeee/kimai2-cmd) __
+
 A command line client for [Kimai](http://www.kimai.org/), the open source self hosted timetracker.
 This program was created to be used with the rainmeter skin [kimai-widget](https://github.com/infeeeee/kimai-widget) on Windows.
 
